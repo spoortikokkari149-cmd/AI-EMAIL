@@ -13,7 +13,9 @@ import {
   EyeOff, 
   Terminal,
   Zap,
-  Cpu
+  Cpu,
+  Globe,
+  ExternalLink
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -205,11 +207,27 @@ export function AuthPage() {
 
           {/* Validation & Error Alerts */}
           {(authError || localValidation) && (
-            <div className="mb-5 p-3 rounded-xl bg-red-950/50 border border-red-500/40 text-red-200 text-xs flex items-start gap-2.5">
-              <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-              <div className="leading-relaxed">
-                {localValidation || authError}
+            <div className="mb-5 p-3.5 rounded-xl bg-red-950/60 border border-red-500/50 text-red-200 text-xs space-y-2">
+              <div className="flex items-start gap-2.5">
+                <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                <div className="leading-relaxed font-sans">
+                  {localValidation || authError}
+                </div>
               </div>
+              {authError?.includes('unauthorized-domain') && (
+                <div className="mt-2 pt-2 border-t border-red-500/30 text-[11px] text-red-300 font-mono space-y-1.5">
+                  <div className="flex items-center gap-1.5 text-cyan-300 font-semibold">
+                    <Globe className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                    <span>Domain Configuration Hint:</span>
+                  </div>
+                  <p className="text-slate-300 font-sans leading-normal">
+                    This preview host (<span className="text-cyan-300 font-mono">{typeof window !== 'undefined' ? window.location.hostname : 'run.app'}</span>) has not yet been registered in Firebase Console's Authorized Domains list for Google OAuth.
+                  </p>
+                  <p className="text-amber-200 font-sans leading-normal">
+                    💡 <strong>Quick Access:</strong> You can create an account directly below using any Email and Password without needing external OAuth!
+                  </p>
+                </div>
+              )}
             </div>
           )}
 

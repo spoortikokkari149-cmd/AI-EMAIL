@@ -1,13 +1,18 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { defineConfig, type Plugin } from 'vite';
 import { 
   runGeminiEmailAnalysis, 
   runGeminiMessageAnalysis, 
   runGeminiScreenshotAnalysis, 
   runGeminiCyberChat 
-} from './src/server/geminiAnalyze';
+} from './src/server/geminiAnalyze.ts';
+
+const rootDir = typeof import.meta.dirname !== 'undefined'
+  ? import.meta.dirname
+  : path.dirname(fileURLToPath(import.meta.url));
 
 function apiServerPlugin(): Plugin {
   return {
@@ -110,7 +115,7 @@ export default defineConfig(() => {
     plugins: [react(), tailwindcss(), apiServerPlugin()],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': rootDir,
       },
     },
     server: {

@@ -46,6 +46,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const anyErr = err as { code?: string; message?: string };
     const code = anyErr.code || '';
     switch (code) {
+      case 'auth/unauthorized-domain':
+        return 'Firebase Authentication error: This domain is not authorized in your Firebase console (auth/unauthorized-domain). Please add this URL hostname to "Authorized domains" under Firebase Console > Authentication > Settings, or use Email/Password sign-in.';
       case 'auth/invalid-credential':
       case 'auth/wrong-password':
       case 'auth/user-not-found':

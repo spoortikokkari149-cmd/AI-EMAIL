@@ -1,0 +1,74 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net: default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Connection validation test document
+    match /test/connection {
+      allow read: if true;
+    }
+
+    // Common security helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // User profile validation
+    function isValidUser(data) {
+      return data.id is string &&
+             data.id == request.auth.uid &&
+             data.email is string &&
+             data.email.size() <= 256;
+    }
+
+    // EmailScan validation
+    function isValidEmailScan(data) {
+      return data.id is string &&
+             isValidId(data.id) &&
+             data.userId == request.auth.uid &&
+             data.fileName is string &&
+             data.fileName.size() <= 256 &&
+             data.threatType is string &&
+             data.threatType.size() <= 64 &&
+             data.threatLevel is string &&
+             data.threatLevel.size() <= 32 &&
+             data.riskScore is number &&
+             data.riskScore >= 0 &&
+             data.riskScore <= 100;
+    }
+
+    // User Profiles
+    match /users/{userId} {
+      allow get: if isSignedIn() && request.auth.uid == userId && isValidId(userId);
+      allow list: if false; // Blanket listing prohibited
+      allow create: if isSignedIn() && request.auth.uid == userId && isValidId(userId) && isValidUser(incoming());
+      allow update: if isSignedIn() && request.auth.uid == userId && isValidId(userId) && isValidUser(incoming()) && incoming().id == existing().id;
+      allow delete: if isSignedIn() && request.auth.uid == userId && isValidId(userId);
+    }
+
+    // Email Scans
+    match /emailScans/{scanId} {
+      allow get: if isSignedIn() && isValidId(scanId) && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(scanId) && isValidEmailScan(incoming());
+      allow update: if isSignedIn() && isValidId(scanId) && isValidEmailScan(incoming()) && incoming().userId == existing().userId;
+      allow delete: if isSignedIn() && isValidId(scanId) && existing().userId == request.auth.uid;
+    }
+  }
+}

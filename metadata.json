@@ -1,0 +1,6 @@
+{
+  "name": "AI Email Threat Detection",
+  "description": "Detect phishing, spam, scams and malicious emails with AI. Comprehensive email header and content analysis, risk scoring, threat telemetry, and security recommendations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

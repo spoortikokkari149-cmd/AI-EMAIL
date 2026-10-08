@@ -1,0 +1,126 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "User UID"
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User display name"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "User avatar URL"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Account creation timestamp ISO"
+        },
+        "lastLoginAt": {
+          "type": "string",
+          "description": "Last sign in timestamp ISO"
+        },
+        "totalScans": {
+          "type": "number",
+          "description": "Count of email scans executed"
+        }
+      },
+      "required": ["id", "email", "createdAt"]
+    },
+    "EmailScan": {
+      "title": "EmailScan",
+      "description": "Cybersecurity email threat analysis record",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Scan unique identifier"
+        },
+        "userId": {
+          "type": "string",
+          "description": "User ID who submitted the email scan"
+        },
+        "fileName": {
+          "type": "string",
+          "description": "Uploaded .eml file name"
+        },
+        "subject": {
+          "type": "string",
+          "description": "Parsed email subject line"
+        },
+        "senderEmail": {
+          "type": "string",
+          "description": "Sender email address from headers"
+        },
+        "senderName": {
+          "type": "string",
+          "description": "Sender display name"
+        },
+        "recipientEmail": {
+          "type": "string",
+          "description": "Recipient email address"
+        },
+        "threatType": {
+          "type": "string",
+          "description": "Identified threat classification"
+        },
+        "threatLevel": {
+          "type": "string",
+          "description": "Threat severity tier: Critical, High, Medium, Low, Clean"
+        },
+        "riskScore": {
+          "type": "number",
+          "description": "Calculated risk score from 0 to 100"
+        },
+        "confidence": {
+          "type": "number",
+          "description": "AI model confidence score percentage"
+        },
+        "suspiciousUrlsCount": {
+          "type": "number",
+          "description": "Number of flagged suspicious URLs"
+        },
+        "findingsCount": {
+          "type": "number",
+          "description": "Number of detected threat indicators"
+        },
+        "summary": {
+          "type": "string",
+          "description": "High level threat overview summary"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Scan submission timestamp"
+        },
+        "fullAnalysisJson": {
+          "type": "string",
+          "description": "Serialized full threat report including headers, URLs, and recommendations"
+        }
+      },
+      "required": ["id", "userId", "fileName", "threatType", "threatLevel", "riskScore", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "User"
+      },
+      "description": "Stores individual user profile and scan counters"
+    },
+    "/emailScans/{scanId}": {
+      "schema": {
+        "$ref": "EmailScan"
+      },
+      "description": "Stores threat detection analysis reports for emails scanned by authenticated users"
+    }
+  }
+}
